@@ -1,0 +1,23 @@
+{
+  "name": "insight-hunter-lite",
+  "version": "1.0.0",
+  "description": "Insight Hunter Lite - Empowering small business with forecasting and reporting",
+  "main": "frontend/main.tsx",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "start": "vite preview",
+    "setup": "node setup.js"
+  },
+  "dependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "jspdf": "^2.5.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vite": "^4.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0"
+  }
+}
