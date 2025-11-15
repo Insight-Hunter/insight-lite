@@ -8,7 +8,7 @@ JWT_SECRET = "replace-me"
 
 [[kv_namespaces]]
 binding = "USER_STORE"
-id = "replace-with-kv-id"
+id = "6dd308dd1c0a4d6c83cb3ffd82847530"
 
 [[r2_buckets]]
 binding = "R2_BUCKET"
