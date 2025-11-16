@@ -821,7 +821,7 @@ snapshots:
 
   jspdf@3.0.3:
     dependencies:
-      '@babel/runtime': 7.28.4
+      '@babel/runtime': 7.28.4b
       fast-png: 6.4.0
       fflate: 0.8.2
     optionalDependencies:
