@@ -4,7 +4,16 @@ export async function handleSummary(request, env) {
         const raw = await env.USER_STORE.get("raw_data");
         let summary = "No data available.";
         if (raw) {
-            const data = JSON.parse(raw);
+            let data;
+            try {
+                data = JSON.parse(raw);
+            } catch (parseError) {
+                console.error("Failed to parse stored  parseError);
+                summary = "Error processing stored data.";
+                return new Response(JSON.stringify({ summary }), {
+                    headers: { "Content-Type": "application/json" },
+                });
+            }
             // Example: basic summary based on revenue array length
             summary = `Forecast includes ${data.revenue.length} quarters of data with steady growth.`;
         }
