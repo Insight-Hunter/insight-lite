@@ -4,9 +4,6 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = Deno.env.get("JWT_SECRET") || "supersecretkey";
 const JWT_EXPIRATION = "1h"; // token valid for 1 hour
 
-const hashed = await bcrypt.hash(password, 10);
-await env.USER_STORE.put(email, JSON.stringify({ id: userId, email, password: hashed }));
-
 export async function handleLogin(
   request: Request,
   env: { USER_STORE: KVNamespace }
@@ -32,6 +29,9 @@ export async function handleLogin(
         status: 401,
         headers: { "Content-Type": "application/json" },
       });
+      const hashed = await bcrypt.hash(password, 10);
+      await env.USER_STORE.put(email, JSON.stringify({ id: userId, email, password: hashed })
+                              );
     }
 
     // Generate JWT
