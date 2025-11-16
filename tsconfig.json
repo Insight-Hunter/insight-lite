@@ -11,5 +11,5 @@
     "skipLibCheck": true,
     "outDir": "dist"
   },
-  "include": ["frontend", "backend", "shared"]
+  "include": ["frontend", "backend"]
 }
