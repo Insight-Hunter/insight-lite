@@ -1,4 +1,4 @@
-export async function handleForecast(request: Request, env: { USER_STORE: "6dd308dd1c0a4d6c83cb3ffd82847530" }) {
+export async function handleForecast(request: Request, env: { USER_STORE: KVNamespace }
   const raw = await env.USER_STORE.get("raw_data")
   const data = raw ? JSON.parse(raw) : { revenue: [12000, 13500, 14200, 15000] }
   const forecast = data.revenue.map((val: number, i: number) => val * Math.pow(1.05, i + 1))
