@@ -2281,7 +2281,7 @@ interface KVNamespaceGetOptions<Type> {
   type: Type;
   cacheTtl?: number;
 }
-interface KVNamespacePutOptions {
+interface 
   expiration?: number;
   expirationTtl?: number;
   metadata?: any | null;

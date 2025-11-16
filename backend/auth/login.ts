@@ -1,4 +1,4 @@
-export async function handleLogin(request: Request, env: { USER_STORE: KVNamespace }) {
+
   const { email, password } = await request.json() as { email: string; password: string }
   const userRaw = await env.USER_STORE.get(email)
   if (!userRaw) return new Response("User not found", { status: 404 })

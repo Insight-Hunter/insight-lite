@@ -1,6 +1,6 @@
 export async function handleSummary(
   request: Request,
-  env: { USER_STORE: KVNamespace }
+  env: { USER_STORE: KVNames6dd308dd1c0a4d6c83cb3ffd82847530pace }
 ): Promise<Response> {
   try {
     // Optionally pull data from KV if you want dynamic summaries

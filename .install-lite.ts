@@ -1,7 +1,7 @@
-import { mkdirSync, writeFileSync } from "fs"
-import { join } from "path"
+import { mkdirSync, writeFileSync } from "fs";
+import { join } from "path";
 
-const root = "insight-hunter-lite"
+const root = "insight-hunter-lite";
 const folders = [
   "frontend/pages",
   "frontend/routes",
@@ -15,8 +15,8 @@ const folders = [
   "backend/pdf",
   "shared",
   "scripts",
-  ".github/workflows"
-]
+  ".github/workflows",
+];
 
 const files: Record<string, string> = {
   "package.json": `{
@@ -170,8 +170,8 @@ export default {
 }
 
 export interface Env {
-  USER_STORE: KVNamespace
-  R2_BUCKET: R2Bucket
+  USER_STORE: "USER_STORE"'
+  R2_BUCKET: "ih-pdfs"
 }`,
 
   ".github/workflows/deploy.yml": `name: Deploy Insight Hunter Lite
@@ -184,16 +184,18 @@ jobs:
       - run: npm install
       - run: npm run setup || true
       - run: npx wrangler deploy
-      - run: npx wrangler pages deploy ./frontend --project-name insight-hunter-lite`
-}
+      - run: npx wrangler pages deploy ./frontend --project-name insight-hunter-lite`,
+};
 
 // Create folders
-mkdirSync(root)
-folders.forEach(f => mkdirSync(join(root, f), { recursive: true }))
+mkdirSync(root);
+folders.forEach((f) => mkdirSync(join(root, f), { recursive: true }));
 
 // Write files
 Object.entries(files).forEach(([path, content]) => {
-  writeFileSync(join(root, path), content)
-})
+  writeFileSync(join(root, path), content);
+});
 
-console.log("✅ Insight Hunter Lite scaffold installed with full config and dependencies.")
+console.log(
+  "✅ Insight Hunter Lite scaffold installed with full config and dependencies."
+);
