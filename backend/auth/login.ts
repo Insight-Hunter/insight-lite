@@ -43,7 +43,7 @@ async function verifyJWT(token: string, secret: string): Promise<any | null> {
 
   if (!headerB64 || !payloadB64 || !signatureB64) return null;
 
-  const data = `${headerB4}.${payloadB4}`;
+  const data = `${headerB64}.${payloadB64}`;
 
   const signature = Uint8Array.from(
     atob(signatureB64.replace(/-/g, "+").replace(/_/g, "/")),
