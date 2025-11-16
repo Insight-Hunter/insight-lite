@@ -15,6 +15,6 @@ export default {
 }
 
 export interface Env {
-  USER_STORE: "USER_STORE"
-  R2_BUCKET: "ih-pdfs"
+  USER_STORE: 6dd308dd1c0a4d6c83cb3ffd82847530
+  R2_BUCKET: ih-pdfs
 }
