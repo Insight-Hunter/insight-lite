@@ -4,6 +4,8 @@
     "types": ["@cloudflare/workers-types"],
     "lib": ["ES2021"],
     "module": "ESNext",
-    "target": "ES2021"
-  }
+    "target": "ES2021",
+    "isolatedModules": false
+  },
+  "include": ["**/*.ts"]
 }
