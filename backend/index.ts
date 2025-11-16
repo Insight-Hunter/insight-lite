@@ -4,7 +4,7 @@ import { handleSummary } from "./summary/summary";
 import { handlePDFUpload } from "./pdf/upload";
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext) {
+  async fetch(request: Request, env: Env) {
     const url = new URL(request.url)
     if (url.pathname === "/api/auth/login") return handleLogin(request, env)
     if (url.pathname === "/api/demo/forecast") return handleForecast(request, env)
