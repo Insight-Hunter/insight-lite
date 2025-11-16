@@ -1,6 +1,6 @@
 export async function handleLogin(
   request: Request,
-  env: { USER_STORE: "6dd308dd1c0a4d6c83cb3ffd82847530" }
+  env: { USER_STORE: KVNamespace }
 ): Promise<Response> {
   try {
     const { email, password } = await request.json() as {
