@@ -1,5 +1,7 @@
 import bcrypt from "bcryptjs"; // pure JS bcrypt
-import jwt from "jsonwebtoken";
+import { jwtVerify, SignJWT } from 'jose';
+
+const JWT_EXPIRATION = '1h';
 
 export interface LoginEnv {
   USER_STORE: KVNamespace;
@@ -53,42 +55,36 @@ export async function handleRegister(
 }
 
 /** LOGIN endpoint */
+
 export async function handleLogin(
   request: Request,
-  env: LoginEnv
+  env: { USER_STORE: KVNamespace; JWT_SECRET: string }
 ): Promise<Response> {
+  const { email, password } = await request.json() as { email: string; password: string };
+  const userRaw = await env.USER_STORE.get(email);
+  if (!userRaw) return new Response('User not found', { status: 404 });
+
+  const user = JSON.parse(userRaw);
+  if (user.password !== password) return new Response('Invalid credentials', { status: 401 });
+
+  const alg = 'HS256';
+  const secret = new TextEncoder().encode(env.JWT_SECRET);
+  const token = await new SignJWT({ sub: user.id, email })
+    .setProtectedHeader({ alg })
+    .setExpirationTime('1h')
+    .sign(secret);
+
+  return new Response(JSON.stringify({ token }), { headers: { 'Content-Type': 'application/json' } });
+}
+
+export async function verifyJWT(token: string, secret: string) {
   try {
-    const { email, password } = (await request.json()) as {
-      email: string;
-      password: string;
-    };
-    const userRaw = await env.USER_STORE.get(email);
-    if (!userRaw)
-      return new Response(JSON.stringify({ error: "User not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
-
-    const user = JSON.parse(userRaw);
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid)
-      return new Response(JSON.stringify({ error: "Invalid credentials" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-
-    const token = jwt.sign({ sub: user.id, email }, env.JWT_SECRET, {
-      algorithm: "HS256",
-      expiresIn: "1h",
-    });
-    return new Response(JSON.stringify({ token }), {
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (err: any) {
-    return new Response(
-      JSON.stringify({ error: err.message || "Login failed" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    const alg = 'HS256';
+    const key = new TextEncoder().encode(secret);
+    const { payload } = await jwtVerify(token, key);
+    return payload;
+  } catch {
+    return null;
   }
 }
 
