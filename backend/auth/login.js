@@ -1,5 +1,7 @@
 import bcrypt from "bcryptjs"; // pure JS bcrypt
-import jwt from "jsonwebtoken";
+import { jwtVerify, SignJWT } from 'jose';
+
+const JWT_EXPIRATION = '1h';
 // Seed admin user once on worker start (optional)
 export async function seedAdmin(env) {
     const email = "admin@insighthunter.app";
