@@ -1,4 +1,4 @@
-import { parse } from "https://deno.land/std@0.203.0/encoding/csv.ts";
+import Papa from "papaparse";
 
 const REVENUE_COLUMNS = ["Revenue", "revenue", "Rev", "Amount"];
 
@@ -23,7 +23,7 @@ export async function handleForecast(
       const text = await file.text();
       let parsed: Record<string, string>[];
       try {
-        parsed = (await parse(text, { skipFirstRow: false })) as Record<string, string>[];
+        parsed = Papa.parse(text, { header: true }).data as Record<string, string>[];
       } catch {
         return new Response(JSON.stringify({ error: "Failed to parse CSV" }), {
           status: 400,
@@ -40,7 +40,7 @@ export async function handleForecast(
 
       // Flexible column detection
       const revenue: number[] = [];
-      parsed.forEach(row => {
+      parsed.forEach((row) => {
         for (const col of REVENUE_COLUMNS) {
           const val = row[col];
           if (val) {
@@ -137,15 +137,16 @@ export async function handleForecast(
       });
     }
 
+    // Same forecast logic as above
     const growthRate = 0.05;
     const forecast: number[] = [];
     const trends: ("up" | "down" | "stable")[] = [];
     const pctChange: number[] = [];
     const chartLabels: string[] = [];
 
-    const periods = period === "monthly" ? 12 : data.revenue.length;
+    const forecastPeriods = period === "monthly" ? 12 : data.revenue.length;
 
-    for (let i = 0; i < periods; i++) {
+    for (let i = 0; i < forecastPeriods; i++) {
       const base = data.revenue[i % data.revenue.length];
       const value = parseFloat((base * Math.pow(1 + growthRate, i + 1)).toFixed(2));
       forecast.push(value);
