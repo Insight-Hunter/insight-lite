@@ -19,7 +19,7 @@ export default {
         if (url.pathname.startsWith("/api/demo/summary"))
             return handleSummary(request, { USER_STORE: env.USER_STORE });
         // PDF upload
-        if (url.pathname.startsWith("/api/pdf/upload"))
+        if (url.pathname.startsWith("/api/pdf/upload") && request.method === "POST")
             return handlePDFUpload(request, { R2_BUCKET: env.R2_BUCKET });
         return new Response("Not Found", { status: 404 });
     }
