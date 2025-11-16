@@ -1,10 +1,10 @@
 import { handleLogin } from "./auth/login"
 import { handleForecast } from "./forecast/forecast"
 import { handleSummary } from "./summary/summary"
-import { handlePDFUpload } from "./pdf/upload"
+import { handlePDFUpload } from "./pdf/
 
 export default {
-  async fetch(request: Request, env: Env) {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext) {
     const url = new URL(request.url)
     if (url.pathname === "/api/auth/login") return handleLogin(request, env)
     if (url.pathname === "/api/demo/forecast") return handleForecast(request, env)
