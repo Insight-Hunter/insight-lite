@@ -1,9 +1,10 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
     "types": ["@cloudflare/workers-types"],
     "lib": ["ES2021"],
     "module": "ESNext",
-    "target": "ES2021"
-  }
+    "target": "ES2021",
+    "moduleResolution": "Node"
+  },
+  "include": ["./**/*.ts"]
 }
