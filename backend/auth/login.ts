@@ -5,7 +5,25 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = Deno.env.get("JWT_SECRET") || "lite-secret";
 const JWT_EXPIRATION = "1h";
 
+// Seed admin user on Worker startup (only in production)
+async function seedAdmin(env: { USER_STORE: KVNamespace }) {
+  const email = "admin@insighthunter.app";
+  const password = "AdminPass123!"; // change to a secure password
+  const existing = await env.USER_STORE.get(email);
+  if (!existing) {
+    const hashed = await bcrypt.hash(password, 10);
+    const user = { id: crypto.randomUUID(), email, password: hashed };
+    await env.USER_STORE.put(email, JSON.stringify(user));
+    console.log("Admin user created:", email);
+  }
+}
+
 export async function handleRequest(request: Request, env: { USER_STORE: KVNamespace }) {
+  // Only seed admin if ENVIRONMENT is "production"
+  if (Deno.env.get("ENVIRONMENT") === "production") {
+    seedAdmin(env);
+  }
+
   const url = new URL(request.url);
   const path = url.pathname;
 
@@ -20,13 +38,11 @@ export async function handleRequest(request: Request, env: { USER_STORE: KVNames
 async function handleRegister(request: Request, env: { USER_STORE: KVNamespace }) {
   try {
     const { email, password } = await request.json();
-
     const existing = await env.USER_STORE.get(email);
     if (existing) return new Response(JSON.stringify({ error: "User already exists" }), { status: 409, headers: { "Content-Type": "application/json" } });
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = { id: crypto.randomUUID(), email, password: hashedPassword };
-
     await env.USER_STORE.put(email, JSON.stringify(user));
 
     return new Response(JSON.stringify({ message: "User registered successfully" }), { status: 201, headers: { "Content-Type": "application/json" } });
@@ -39,7 +55,6 @@ async function handleRegister(request: Request, env: { USER_STORE: KVNamespace }
 async function handleLogin(request: Request, env: { USER_STORE: KVNamespace }) {
   try {
     const { email, password } = await request.json();
-
     const userRaw = await env.USER_STORE.get(email);
     if (!userRaw) return new Response(JSON.stringify({ error: "User not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
 
