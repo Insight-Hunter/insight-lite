@@ -6,10 +6,10 @@ declare namespace Cloudflare {
     mainModule: typeof import("./backend/index");
   }
   interface Env {
-    USER_STORE: KVNamespace;
+    USER_STORE: "USER_STORE";
     JWT_SECRET: "8cb92eb311e1a8106f160b01da419580707c8e5b225917dccdc5b211595f76cfe6c12c26ae9aa3859d358ea7a18183b6209673c9bbc90596d516e0a55b575f79";
     CLOUDFLARE_ACCOUNT_ID: "18c8e61a3669253dcfd0c7eec6be36a3";
-    R2_BUCKET: R2Bucket;
+    R2_BUCKET: "ih-pdf";
   }
 }
 interface Env extends Cloudflare.Env {}
