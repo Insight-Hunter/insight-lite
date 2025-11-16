@@ -52,23 +52,45 @@ async function handleRegister(request: Request, env: { USER_STORE: KVNamespace }
 }
 
 /** LOGIN */
-async function handleLogin(request: Request, env: { USER_STORE: KVNamespace }) {
+import jwt from "jsonwebtoken"
+
+export async function handleLogin(
+  request: Request,
+  env: { USER_STORE: KVNamespace; JWT_SECRET: string }
+): Promise<Response> {
   try {
-    const { email, password } = await request.json();
-    const userRaw = await env.USER_STORE.get(email);
-    if (!userRaw) return new Response(JSON.stringify({ error: "User not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
+    const { email, password } = await request.json() as {
+      email: string
+      password: string
+    }
 
-    const user = JSON.parse(userRaw);
-    const valid = await bcrypt.compare(password, user.password);
-    if (!valid) return new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401, headers: { "Content-Type": "application/json" } });
+    const userRaw = await env.USER_STORE.get(email)
+    if (!userRaw) {
+      return new Response("User not found", { status: 404 })
+    }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRATION });
+    const user = JSON.parse(userRaw)
+    if (user.password !== password) {
+      return new Response("Invalid credentials", { status: 401 })
+    }
 
-    return new Response(JSON.stringify({ token }), { status: 200, headers: { "Content-Type": "application/json" } });
+    const token = jwt.sign(
+      { sub: user.id, email },
+      env.JWT_SECRET,
+      { algorithm: "HS256", expiresIn: "1h" }
+    )
+
+    return new Response(JSON.stringify({ token }), {
+      headers: { "Content-Type": "application/json" }
+    })
   } catch (err: any) {
-    return new Response(JSON.stringify({ error: err.message || "Login failed" }), { status: 500, headers: { "Content-Type": "application/json" } });
+    return new Response(
+      JSON.stringify({ error: err.message || "Login failed" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    )
   }
 }
+
 
 /** PROTECTED ENDPOINT */
 async function handleProtected(request: Request) {
