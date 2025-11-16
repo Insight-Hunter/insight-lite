@@ -12,7 +12,7 @@ export async function handleForecast(
     // --- CSV Upload + Auto-Forecast Endpoint ---
     if (request.method === "POST" && url.pathname === "/forecast/upload") {
       const formData = await request.formData();
-      const file = formData.get("file") as File;
+      const file = formData.get("file") as File | null;
       if (!file) {
         return new Response(JSON.stringify({ error: "No file uploaded" }), {
           status: 400,
@@ -21,9 +21,12 @@ export async function handleForecast(
       }
 
       const text = await file.text();
-      let parsed: Record<string, string>[];
+      let parsed: Record<string, string | undefined>[];
       try {
-        parsed = Papa.parse(text, { header: true }).data as Record<string, string>[];
+        parsed = Papa.parse<Record<string, string>>(text, { header: true }).data as Record<
+          string,
+          string | undefined
+        >[];
       } catch {
         return new Response(JSON.stringify({ error: "Failed to parse CSV" }), {
           status: 400,
@@ -43,8 +46,8 @@ export async function handleForecast(
       parsed.forEach((row) => {
         for (const col of REVENUE_COLUMNS) {
           const val = row[col];
-          if (val) {
-            const num = parseFloat(val);
+          if (val !== undefined && val !== null && val !== "") {
+            const num = parseFloat(String(val).replace(/[^0-9.\-]/g, ""));
             if (!isNaN(num)) {
               revenue.push(num);
               break;
@@ -64,21 +67,21 @@ export async function handleForecast(
       await env.USER_STORE.put("raw_data", JSON.stringify({ revenue }));
 
       // --- Auto-generate forecast ---
-      const period = url.searchParams.get("period") || "quarterly";
+      const periodParam = url.searchParams.get("period") || "quarterly";
       const growthRate = 0.05;
       const forecast: number[] = [];
       const trends: ("up" | "down" | "stable")[] = [];
       const pctChange: number[] = [];
       const chartLabels: string[] = [];
 
-      const periods = period === "monthly" ? 12 : revenue.length;
+      const periods = periodParam === "monthly" ? 12 : revenue.length;
 
       for (let i = 0; i < periods; i++) {
         const base = revenue[i % revenue.length];
         const value = parseFloat((base * Math.pow(1 + growthRate, i + 1)).toFixed(2));
         forecast.push(value);
 
-        chartLabels.push(period === "monthly" ? `Month ${i + 1}` : `Q${i + 1}`);
+        chartLabels.push(periodParam === "monthly" ? `Month ${i + 1}` : `Q${i + 1}`);
 
         if (i === 0) {
           trends.push("stable");
@@ -139,56 +142,71 @@ export async function handleForecast(
 
     // Same forecast logic as above
     const growthRate = 0.05;
-    const forecast: number[] = [];
-    const trends: ("up" | "down" | "stable")[] = [];
-    const pctChange: number[] = [];
-    const chartLabels: string[] = [];
+    const forecast2: number[] = [];
+    const trends2: ("up" | "down" | "stable")[] = [];
+    const pctChange2: number[] = [];
+    const chartLabels2: string[] = [];
 
     const forecastPeriods = period === "monthly" ? 12 : data.revenue.length;
 
     for (let i = 0; i < forecastPeriods; i++) {
       const base = data.revenue[i % data.revenue.length];
       const value = parseFloat((base * Math.pow(1 + growthRate, i + 1)).toFixed(2));
-      forecast.push(value);
+      forecast2.push(value);
 
-      chartLabels.push(period === "monthly" ? `Month ${i + 1}` : `Q${i + 1}`);
+      chartLabels2.push(period === "monthly" ? `Month ${i + 1}` : `Q${i + 1}`);
 
       if (i === 0) {
-        trends.push("stable");
-        pctChange.push(0);
+        trends2.push("stable");
+        pctChange2.push(0);
       } else {
-        const diff = value - forecast[i - 1];
-        trends.push(diff > 0 ? "up" : diff < 0 ? "down" : "stable");
-        pctChange.push(parseFloat(((diff / forecast[i - 1]) * 100).toFixed(2)));
+        const diff = value - forecast2[i - 1];
+        trends2.push(diff > 0 ? "up" : diff < 0 ? "down" : "stable");
+        pctChange2.push(parseFloat(((diff / forecast2[i - 1]) * 100).toFixed(2)));
       }
     }
 
-    const peaks: number[] = [];
-    const drops: number[] = [];
-    for (let i = 1; i < forecast.length - 1; i++) {
-      if (forecast[i] > forecast[i - 1] && forecast[i] > forecast[i + 1]) peaks.push(i);
-      if (forecast[i] < forecast[i - 1] && forecast[i] < forecast[i + 1]) drops.push(i);
+    const peaks2: number[] = [];
+    const drops2: number[] = [];
+    for (let i = 1; i < forecast2.length - 1; i++) {
+      if (forecast2[i] > forecast2[i - 1] && forecast2[i] > forecast2[i + 1]) peaks2.push(i);
+      if (forecast2[i] < forecast2[i - 1] && forecast2[i] < forecast2[i + 1]) drops2.push(i);
     }
 
     await env.USER_STORE.put(
       "forecast_data",
-      JSON.stringify({ forecast, trends, pctChange, peaks, drops, generatedAt: Date.now() })
+      JSON.stringify({
+        forecast: forecast2,
+        trends: trends2,
+        pctChange: pctChange2,
+        peaks: peaks2,
+        drops: drops2,
+        generatedAt: Date.now(),
+      })
     );
 
     const chartData = {
-      labels: chartLabels,
+      labels: chartLabels2,
       datasets: [
         { label: "Revenue", data: data.revenue, borderColor: "blue", fill: false },
-        { label: "Forecast", data: forecast, borderColor: "orange", fill: false },
+        { label: "Forecast", data: forecast2, borderColor: "orange", fill: false },
       ],
     };
 
     return new Response(
-      JSON.stringify({ revenue: data.revenue, forecast, trends, pctChange, peaks, drops, chartData }),
+      JSON.stringify({
+        revenue: data.revenue,
+        forecast: forecast2,
+        trends: trends2,
+        pctChange: pctChange2,
+        peaks: peaks2,
+        drops: drops2,
+        chartData,
+      }),
       { headers: { "Content-Type": "application/json" } }
     );
   } catch (err: any) {
-    return new Response(JSON.stringify({ error: err.message || "Forecast failed" }), {
+    return new Response(JSON.stringify({ error: err?.message ?? "Forecast failed" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
