@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 // Seed admin user once on worker start (optional)
 export async function seedAdmin(env) {
     const email = "admin@insighthunter.app";
-    const password = "AdminPass123!"; // change to secure password
+    const password = env.ADMIN_PASSWORD || ""; // Use environment variable
     const existing = await env.USER_STORE.get(email);
     if (!existing) {
         const hashed = await bcrypt.hash(password, 10);
