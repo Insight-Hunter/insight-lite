@@ -14,6 +14,12 @@ export async function handleForecast(request, env) {
                 });
             }
             const text = await file.text();
+            if (text.length > 1024 * 1024) { // 1MB limit
+                return new Response(JSON.stringify({ error: "File too large. Maximum size is 1MB" }), {
+                    status: 413,
+                    headers: { "Content-Type": "application/json" },
+                });
+            }
             let parsed;
             try {
                 parsed = Papa.parse(text, { header: true }).data;
