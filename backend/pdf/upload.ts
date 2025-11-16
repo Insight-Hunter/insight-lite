@@ -1,4 +1,4 @@
-export async function handlePDFUpload(request: Request, env: { R2_BUCKET: R2Bucket }) {
+export async function handlePDFUpload(request: Request, env: { R2_BUCKET: "ih-pdfs" }) {
   const blob = await request.arrayBuffer()
   const key = `reports/${Date.now()}.pdf`
   await env.R2_BUCKET.put(key, blob, { httpMetadata: { contentType: "application/pdf" } })
