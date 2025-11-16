@@ -1,7 +1,7 @@
 import { handleLogin } from "./auth/login"
 import { handleForecast } from "./forecast/forecast"
 import { handleSummary } from "./summary/summary"
-import { handlePDFUpload } from "./pdf/
+import { handlePDFUpload } from "./pdf/upload"
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext) {
@@ -15,7 +15,6 @@ export default {
 }
 
 export interface Env {
-  USER_STORE: KVNamespace
-  R2_BUCKET: R2Bucket
-  JWT_SECRET?: string
+  USER_STORE: "USER_STORE"
+  R2_BUCKET: "ih-pdfs"
 }
