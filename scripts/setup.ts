@@ -8,11 +8,10 @@ const forecast = {
   labels: ["Q1", "Q2", "Q3", "Q4"]
 }
 
-const KV =  "6dd308dd1c0a4d6c83cb3ffd82847530"
+const KV =  "KVNamespace"
 
-users.forEach(user => {
-  execSync(`npx wrangler kv:key put ${user.email} '${JSON.stringify(user)}' --namespace-id ${KV}`, { stdio: "inherit" })
-})
+users.forEach(user => { 
+execSync(`npx wrangler kv:key put ${user.email} '${JSON.stringify(user)}' --namespace-id ${KV}`, { stdio: "inherit" }),
 execSync(`npx wrangler kv:key put raw_data '${JSON.stringify(forecast)}' --namespace-id ${KV}`, { stdio: "inherit" })
-
+})
 console.log("✅ Preview users and forecast data seeded.")
