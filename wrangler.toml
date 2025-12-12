@@ -1,17 +1,55 @@
-name = "insight-lite"
-main = "backend/index.ts"
-compatibility_date = "2025-11-15"
-workers_dev = true
+# Cloudflare Workers Configuration for Insight Hunter Lite
+# https://developers.cloudflare.com/workers/wrangler/configuration/
 
+name = "insight-hunter-lite-api"
+main = "workers/index.ts"
+compatibility_date = "2025-12-12"
+account_id = "" # Add your Cloudflare account ID here
+
+# Workers Sites configuration (if needed for static assets)
+# [site]
+# bucket = "./dist"
+
+# KV Namespaces for key-value storage
+# [[kv_namespaces]]
+# binding = "INSIGHTS_KV"
+# id = "" # Add your KV namespace ID here
+# preview_id = "" # Add your preview KV namespace ID here
+
+# D1 Database bindings (Cloudflare's SQL database)
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "insight-hunter-db"
+# database_id = "" # Add your D1 database ID here
+
+# R2 Bucket bindings (object storage for files/exports)
+# [[r2_buckets]]
+# binding = "REPORTS_BUCKET"
+# bucket_name = "insight-hunter-reports"
+
+# Environment Variables
 [vars]
-JWT_SECRET = "8cb92eb311e1a8106f160b01da419580707c8e5b225917dccdc5b211595f76cfe6c12c26ae9aa3859d358ea7a18183b6209673c9bbc90596d516e0a55b575f79"
-CLOUDFLARE_ACCOUNT_ID = "18c8e61a3669253dcfd0c7eec6be36a3"
 ENVIRONMENT = "production"
+API_VERSION = "v1"
 
-[[kv_namespaces]]
-binding = "USER_STORE"
-id = "6dd308dd1c0a4d6c83cb3ffd82847530"
+# CORS configuration
+[env.production]
+name = "insight-hunter-lite-api"
+vars = { ENVIRONMENT = "production" }
 
-[[r2_buckets]]
-binding = "R2_BUCKET"
-bucket_name = "ih-pdfs"
+[env.staging]
+name = "insight-hunter-lite-api-staging"
+vars = { ENVIRONMENT = "staging" }
+
+[env.development]
+name = "insight-hunter-lite-api-dev"
+vars = { ENVIRONMENT = "development" }
+
+# Build configuration
+[build]
+command = "npm run build:worker"
+
+# Routes configuration (uncomment to attach worker to specific routes)
+# routes = [
+#   { pattern = "api.insighthunter.com/*", zone_name = "insighthunter.com" }
+# ]

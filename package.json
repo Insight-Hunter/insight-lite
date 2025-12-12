@@ -1,30 +1,36 @@
 {
-  "name": "insight-lite",
-  "version": "1.0.0",
-  "private": true,
+  "name": "insight-hunter-lite",
+  "version": "3.0.0",
+  "description": "AI-Powered Auto-CFO Platform for Financial Insights",
+  "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -p backend/tsconfig.json && tsc -p tsconfig.json && vite build",
+    "build": "tsc && vite build",
+    "build:worker": "tsc workers/index.ts --outDir dist-worker --module esnext --target esnext --moduleResolution bundler",
     "preview": "vite preview",
-    "setup": "ts-node scripts/setup.ts",
-    "start": "vite"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "deploy:pages": "npm run build && wrangler pages deploy dist",
+    "deploy:worker": "wrangler deploy",
+    "deploy": "npm run deploy:pages && npm run deploy:worker",
+    "dev:worker": "wrangler dev",
+    "cf:login": "wrangler login",
+    "cf:d1:create": "wrangler d1 create insight-hunter-db",
+    "cf:kv:create": "wrangler kv:namespace create INSIGHTS_KV",
+    "cf:r2:create": "wrangler r2 bucket create insight-hunter-reports"
   },
   "dependencies": {
-    "bcryptjs": "2.4.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.22.3",
-    "jspdf": "^3.0.3"
+    "react-router-dom": "^6.22.0",
+    "recharts": "^2.12.0",
+    "jspdf": "^2.5.1",
+    "lucide-react": "^0.454.0"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "vite": "^7.2.2",
-    "@vitejs/plugin-react": "^4.2.0",
-    "@types/react": "^18.3.26",
-    "@types/react-dom": "^18.3.7",
-    "@types/react-router-dom": "^5.3.3",
-    "@cloudflare/workers-types": "^4.20241112.0",
-    "ts-node": "^10.9.2"
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3"
   }
 }
-
