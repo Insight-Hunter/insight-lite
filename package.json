@@ -14,6 +14,9 @@
   ],
   "scripts": {
     "dev": "vite",
+    "build": "vite build",
+    "build:bundle": "node esbuild.bundle.config.mjs",
+    "build:dist": "npm run build && npm run build:bundle"
     "build:spa": "vite build",
     "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist-worker --project tsconfig.json",
     "build:worker": "tsc workers/index.ts --outDir dist-worker --module esnext --target esnext --moduleResolution bundler",
