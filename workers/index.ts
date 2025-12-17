@@ -3,38 +3,39 @@
  * Handles all backend API requests for Insight Hunter Lite
  */
 // src/worker/index.ts
-
+// workers/index.ts
 import { Router } from './router';
 import { corsHeaders, handleCORS } from './middleware/cors';
 
 export interface Env {
-  // KV Namespaces
   INSIGHTS_KV?: KVNamespace;
-  // D1 Database
   DB?: D1Database;
-  // R2 Buckets
   REPORTS_BUCKET?: R2Bucket;
-  // Static assets binding for SPA (configured in wrangler.jsonc)
+
+  // Static assets binding from wrangler.toml
   ASSETS: Fetcher;
-  // Environment Variables
+
   ENVIRONMENT?: string;
   API_VERSION?: string;
-  // Secrets
+
   OPENAI_API_KEY?: string;
   JWT_SECRET?: string;
 }
 
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: Env, _ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
-    // Handle CORS preflight
+
+    // CORS preflight
     if (request.method === 'OPTIONS') {
       return handleCORS(request);
     }
-    try {
-      // API routes
-      if (url.pathname.startsWith('/api/')) {
+
+    // API routes
+    if (url.pathname.startsWith('/api/')) {
+      try {
         const router = new Router(env);
+
         if (url.pathname === '/api/health') {
           return new Response(
             JSON.stringify({
@@ -53,26 +54,35 @@ export default {
         }
 
         const response = await router.handle(request);
+
         const headersWithCORS = new Headers(response.headers);
-        Object.entries(corsHeaders).forEach(([key, value]) => headersWithCORS.set(key, value));
+        Object.entries(corsHeaders).forEach(([k, v]) => headersWithCORS.set(k, v));
 
         return new Response(response.body, {
           status: response.status,
           statusText: response.statusText,
           headers: headersWithCORS,
         });
+      } catch (err) {
+        console.error('API error:', err);
+        return new Response(
+          JSON.stringify({
+            error: 'Internal Server Error',
+            message: err instanceof Error ? err.message : 'Unknown error',
+          }),
+          {
+            status: 500,
+            headers: {
+              'Content-Type': 'application/json',
+              ...corsHeaders,
+            },
+          }
+        );
       }
-      // Serve static assets for everything else (SPA fallback)
-      return env.ASSETS.fetch(request);
-    } catch (error: any) {
-      console.error('Worker Error:', error);
-      return new Response(JSON.stringify({ error: error.message || 'Internal Error' }), {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-          ...corsHeaders,
-        },
-      });
     }
+
+    // Everything else: serve SPA static assets
+    return env.ASSETS.fetch(request);
   },
 };
+
