@@ -1,0 +1,46 @@
+// src/components/dashboard/RecentActivity.scss
+@import '../../styles/tokens';
+
+.activity-card {
+  background: rgba(7, 16, 40, 0.9);
+  border-radius: 16px;
+  border: 1px solid rgba(130, 94, 255, 0.45);
+  padding: 18px;
+}
+
+.activity-card h2 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.activity-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.activity-card li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  padding: 4px 0;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status-complete {
+  background: $success;
+}
+
+.status-pending {
+  background: #f0ad4e;
+}
+
+.status-error {
+  background: #ff5c7a;
+}
