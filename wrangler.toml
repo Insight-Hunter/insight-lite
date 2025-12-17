@@ -1,7 +1,7 @@
 name = "insight-hunter-lite-api"
 main = "workers/index.ts"
 compatibility_date = "2025-12-12"
-account_id = "" # fill in
+account_id = "18c8e61a3669253dcfd0c7eec6be36a3"
 
 [assets]
 directory = "./dist"
