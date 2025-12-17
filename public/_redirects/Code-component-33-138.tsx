@@ -3,7 +3,8 @@
 
 # SPA Routing - Redirect all requests to index.html for client-side routing
 # This ensures React Router works correctly
-/*    /index.html   200
+
+/index.html   200
 
 # API requests should be proxied to Cloudflare Workers
 # Uncomment and configure after deploying your worker
