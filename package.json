@@ -1,23 +1,38 @@
 {
-  "name": "insight-lite",
+  "name": "@insighthunter/insight-lite",
   "version": "3.0.0",
-  "description": "AI-Powered Auto-CFO Platform for Financial Insights",
+  "description": "InsightHunter Lite – SPA + Cloudflare Worker for the Lite AFP tier",
   "type": "module",
+  "main": "dist-worker/index.mjs",
+  "types": "dist-worker/index.d.ts",
+  "files": [
+    "dist",
+    "dist-worker",
+    "workers",
+    "wrangler.toml",
+    "README.md"
+  ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build:spa": "vite build",
+    "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist-worker --project tsconfig.json",
     "build:worker": "tsc workers/index.ts --outDir dist-worker --module esnext --target esnext --moduleResolution bundler",
-    "build:all": "npm run build && npm run build:worker",
-    "deploy:worker": "npm run build:all && wrangler deploy --env production",
-    "deploy:staging": "npm run build:all && wrangler deploy --env staging",
+    "build": "tsc && npm run build:spa && npm run build:worker && npm run build:types",
+    "deploy:worker": "npm run build && wrangler deploy --env production",
+    "deploy:staging": "npm run build && wrangler deploy --env staging",
     "dev:worker": "wrangler dev --env development",
-    "preview": "vite preview",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "cf:login": "wrangler login",
-    "cf:d1:create": "wrangler d1 create insight-hunter-db",
-    "cf:kv:create": "wrangler kv:namespace create INSIGHTS_KV",
-    "cf:r2:create": "wrangler r2 bucket create insight-hunter-reports"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
+  "keywords": [
+    "cloudflare-workers",
+    "react",
+    "vite",
+    "finance",
+    "insight-hunter",
+    "cfo"
+  ],
+  "author": "Insight Hunter",
+  "license": "MIT",
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -31,6 +46,8 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.4",
     "typescript": "^5.7.2",
-    "vite": "^6.0.3"
+    "vite": "^6.0.3",
+    "wrangler": "^3.90.0",
+    "eslint": "^9.0.0"
   }
 }
