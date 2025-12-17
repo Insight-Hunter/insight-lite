@@ -1,5 +1,5 @@
 {
-  "name": "@Insight-Hunter/insight-lite",
+  "name": "@insight-hunter/insight-lite",
   "version": "3.0.0",
   "description": "InsightHunter Lite – SPA + Cloudflare Worker for the Lite AFP tier",
   "type": "module",
@@ -14,13 +14,14 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:bundle": "node esbuild.bundle.config.mjs",
-    "build:dist": "npm run build && npm run build:bundle"
+
     "build:spa": "vite build",
+    "build:bundle": "node esbuild.bundle.config.mjs",
     "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist-worker --project tsconfig.json",
     "build:worker": "tsc workers/index.ts --outDir dist-worker --module esnext --target esnext --moduleResolution bundler",
-    "build": "tsc && npm run build:spa && npm run build:worker && npm run build:types",
+
+    "build": "tsc && npm run build:spa && npm run build:worker && npm run build:types && npm run build:bundle",
+
     "deploy:worker": "npm run build && wrangler deploy --env production",
     "deploy:staging": "npm run build && wrangler deploy --env staging",
     "dev:worker": "wrangler dev --env development",
@@ -51,6 +52,7 @@
     "typescript": "^5.7.2",
     "vite": "^6.0.3",
     "wrangler": "^3.90.0",
-    "eslint": "^9.0.0"
+    "eslint": "^9.0.0",
+    "esbuild": "^0.24.0"
   }
 }
