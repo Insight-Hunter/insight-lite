@@ -2,62 +2,80 @@
  * API Router for Insight Hunter Lite
  * Handles routing to different API endpoints
  */
+// workers/router.ts
 
-import { Env } from './index';
-import { handleAuth } from './api/auth';
-import { handleTransactions } from './api/transactions';
-import { handleForecasts } from './api/forecasts';
-import { handleReports } from './api/reports';
-import { handleAI } from './api/ai';
+import type { Env } from './index';
 
 export class Router {
-  private env: Env;
-
-  constructor(env: Env) {
-    this.env = env;
-  }
+  constructor(private env: Env) {}
 
   async handle(request: Request): Promise<Response> {
     const url = new URL(request.url);
-    const path = url.pathname;
 
-    // Authentication endpoints
-    if (path.startsWith('/api/auth')) {
-      return handleAuth(request, this.env);
+    if (request.method === 'GET' && url.pathname === '/api/company') {
+      return this.company();
     }
 
-    // Transactions endpoints
-    if (path.startsWith('/api/transactions')) {
-      return handleTransactions(request, this.env);
+    if (request.method === 'GET' && url.pathname === '/api/activity') {
+      return this.activity();
     }
 
-    // Forecasts endpoints
-    if (path.startsWith('/api/forecasts')) {
-      return handleForecasts(request, this.env);
+    if (request.method === 'GET' && url.pathname === '/api/reports') {
+      return this.reports();
     }
 
-    // Reports endpoints
-    if (path.startsWith('/api/reports')) {
-      return handleReports(request, this.env);
+    if (request.method === 'POST' && url.pathname === '/api/simulations') {
+      return this.simulation(request);
     }
 
-    // AI endpoints
-    if (path.startsWith('/api/ai')) {
-      return handleAI(request, this.env);
-    }
+    return new Response(JSON.stringify({ error: 'Not found' }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
-    // 404 Not Found
-    return new Response(
-      JSON.stringify({
-        error: 'Not Found',
-        message: `Endpoint ${path} not found`,
-      }),
+  private async company(): Promise<Response> {
+    // Stub – replace with DB/D1 later
+    const data = {
+      name: 'Acme Liquidity Co.',
+      role: 'Treasurer',
+      domain: 'Liquidity',
+      riskTolerance: 'Moderate',
+      lastReportDate: 'Dec 12',
+    };
+    return Response.json(data);
+  }
+
+  private async activity(): Promise<Response> {
+    const data = [
+      { id: 1, label: 'Quiz submitted', status: 'complete' },
+      { id: 2, label: 'Preview seeded', status: 'complete' },
+      { id: 3, label: 'Report generated', status: 'complete' },
+    ];
+    return Response.json(data);
+  }
+
+  private async reports(): Promise<Response> {
+    const data = [
       {
-        status: 404,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+        id: 'rpt_001',
+        name: 'Liquidity Snapshot - December',
+        createdAt: '2025-12-12',
+        status: 'ready',
+      },
+    ];
+    return Response.json(data);
+  }
+
+  private async simulation(request: Request): Promise<Response> {
+    const body = await request.json().catch(() => ({}));
+    const result = {
+      ...body,
+      horizonMonths: 6,
+      projectedMinCash: 120000,
+      projectedRunwayDays: 185,
+    };
+    return Response.json(result);
   }
 }
+
