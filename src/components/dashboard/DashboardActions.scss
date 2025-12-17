@@ -1,0 +1,41 @@
+// src/components/dashboard/DashboardActions.scss
+@import '../../styles/tokens';
+
+.dh-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.dh-action-card {
+  background: rgba(7, 16, 40, 0.9);
+  border-radius: 16px;
+  border: 1px solid rgba(130, 94, 255, 0.45);
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  color: $text-primary;
+  text-align: left;
+  transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, border-color 0.12s ease-out;
+  background-image: radial-gradient(circle at top left, rgba(58, 243, 255, 0.25), transparent 55%);
+}
+
+.dh-action-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 24px rgba(58, 243, 255, 0.3);
+  border-color: $accent-blue;
+}
+
+.dh-icon {
+  font-size: 20px;
+  color: $accent-purple;
+}
+
+.dh-label {
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
