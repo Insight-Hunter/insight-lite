@@ -1,41 +1,31 @@
-# Cloudflare Workers Configuration for Insight Hunter Lite
-
 name = "insight-hunter-lite-api"
 main = "workers/index.ts"
 compatibility_date = "2025-12-12"
-account_id = "" # Add your Cloudflare account ID here
+account_id = "" # fill in
 
-# Static assets for SPA (built into ./dist)
 [assets]
 directory = "./dist"
 binding = "ASSETS"
 html_handling = "auto-trailing-slash"
 not_found_handling = "single-page-application"
-# Let assets handle most requests directly.
-# We'll override with run_worker_first in env.production for /api/*.
 
 [vars]
 ENVIRONMENT = "production"
 API_VERSION = "v1"
 
-# -------- Environments --------
-
 [env.production]
 name = "insight-hunter-lite-api"
 vars = { ENVIRONMENT = "production" }
-
-# Ensure all /api/* requests run the Worker code first
-[env.production.assets]
-directory = "./dist"
-binding  = "ASSETS"
-html_handling = "auto-trailing-slash"
-not_found_handling = "single-page-application"
-run_worker_first = ["/api/*"]
-
-# Attach to lite.insighthunter.app
 routes = [
   { pattern = "lite.insighthunter.app/*", zone_name = "insighthunter.app" }
 ]
+
+[env.production.assets]
+directory = "./dist"
+binding = "ASSETS"
+html_handling = "auto-trailing-slash"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
 
 [env.staging]
 name = "insight-hunter-lite-api-staging"
@@ -46,4 +36,4 @@ name = "insight-hunter-lite-api-dev"
 vars = { ENVIRONMENT = "development" }
 
 [build]
-command = "npm run build:worker"
+command = "npm run build && npm run build:worker"
