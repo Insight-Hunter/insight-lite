@@ -1,41 +1,41 @@
 # Cloudflare Workers Configuration for Insight Hunter Lite
-# https://developers.cloudflare.com/workers/wrangler/configuration/
 
 name = "insight-hunter-lite-api"
 main = "workers/index.ts"
 compatibility_date = "2025-12-12"
 account_id = "" # Add your Cloudflare account ID here
 
-# Workers Sites configuration (if needed for static assets)
-# [site]
-# bucket = "./dist"
+# Static assets for SPA (built into ./dist)
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+html_handling = "auto-trailing-slash"
+not_found_handling = "single-page-application"
+# Let assets handle most requests directly.
+# We'll override with run_worker_first in env.production for /api/*.
 
-# KV Namespaces for key-value storage
-# [[kv_namespaces]]
-# binding = "INSIGHTS_KV"
-# id = "" # Add your KV namespace ID here
-# preview_id = "" # Add your preview KV namespace ID here
-
-# D1 Database bindings (Cloudflare's SQL database)
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "insight-hunter-db"
-# database_id = "" # Add your D1 database ID here
-
-# R2 Bucket bindings (object storage for files/exports)
-# [[r2_buckets]]
-# binding = "REPORTS_BUCKET"
-# bucket_name = "insight-hunter-reports"
-
-# Environment Variables
 [vars]
 ENVIRONMENT = "production"
 API_VERSION = "v1"
 
-# CORS configuration
+# -------- Environments --------
+
 [env.production]
 name = "insight-hunter-lite-api"
 vars = { ENVIRONMENT = "production" }
+
+# Ensure all /api/* requests run the Worker code first
+[env.production.assets]
+directory = "./dist"
+binding  = "ASSETS"
+html_handling = "auto-trailing-slash"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+# Attach to lite.insighthunter.app
+routes = [
+  { pattern = "lite.insighthunter.app/*", zone_name = "insighthunter.app" }
+]
 
 [env.staging]
 name = "insight-hunter-lite-api-staging"
@@ -45,11 +45,5 @@ vars = { ENVIRONMENT = "staging" }
 name = "insight-hunter-lite-api-dev"
 vars = { ENVIRONMENT = "development" }
 
-# Build configuration
 [build]
 command = "npm run build:worker"
-
-# Routes configuration (uncomment to attach worker to specific routes)
-# routes = [
-#   { pattern = "api.insighthunter.com/*", zone_name = "insighthunter.com" }
-# ]
