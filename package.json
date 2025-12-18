@@ -1,43 +1,27 @@
 {
   "name": "@insight-hunter/insight-lite",
-  "version": "3.0.0",
-  "description": "InsightHunter Lite – SPA + Cloudflare Worker for the Lite AFP tier",
+  "version": "3.0.1",
+  "description": "InsightHunter Lite – SPA + Cloudflare Worker for the Lite tier",
   "type": "module",
-  "engineStrict": true,
+
   "main": "dist-worker/index.mjs",
   "types": "dist-worker/index.d.ts",
-  "files": [
-    "dist",
-    "dist-worker",
-    "workers",
-    "wrangler.toml",
-    "README.md"
-  ],
+
   "scripts": {
     "dev": "vite",
 
     "build:spa": "vite build",
-    "build:bundle": "node esbuild.bundle.config.mjs",
-    "build:types": "tsc --emitDeclarationOnly --declaration --outDir dist-worker --project tsconfig.json",
-    "build:worker": "tsc workers/index.ts --outDir dist-worker --module esnext --target esnext --moduleResolution bundler",
+    "build:worker": "tsc -p tsconfig.worker.json",
+    "build:types": "tsc --emitDeclarationOnly",
 
-    "build": "tsc && npm run build:spa && npm run build:worker && npm run build:types && npm run build:bundle",
+    "build": "npm run build:spa && npm run build:worker && npm run build:types",
 
-    "deploy:worker": "npm run build && wrangler deploy --env production",
-    "deploy:staging": "npm run build && wrangler deploy --env staging",
-    "dev:worker": "wrangler dev --env development",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "dev:worker": "wrangler dev",
+    "deploy:worker": "npm run build && wrangler deploy",
+
+    "lint": "eslint ."
   },
-  "keywords": [
-    "cloudflare-workers",
-    "react",
-    "vite",
-    "finance",
-    "insight-hunter",
-    "cfo"
-  ],
-  "author": "Insight Hunter",
-  "license": "MIT",
+
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -46,6 +30,7 @@
     "jspdf": "^2.5.1",
     "lucide-react": "^0.454.0"
   },
+
   "devDependencies": {
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.0",
@@ -56,8 +41,8 @@
     "eslint": "^9.0.0",
     "esbuild": "^0.24.0"
   },
+
   "engines": {
-    "node": ">=18 <21",
-    "npm": ">=9 <11"
+    "node": ">=18"
   }
 }
