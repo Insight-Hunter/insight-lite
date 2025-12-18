@@ -1,5 +1,5 @@
 name = "insight-hunter-lite-api"
-main = "workers/index.ts"
+main = "dist-workers/index.mjs
 compatibility_date = "2025-12-12"
 account_id = "18c8e61a3669253dcfd0c7eec6be36a3"
 
@@ -36,4 +36,4 @@ name = "insight-hunter-lite-api-dev"
 vars = { ENVIRONMENT = "development" }
 
 [build]
-command = "npm run build && npm run build:worker"
+command = "npm run build"
