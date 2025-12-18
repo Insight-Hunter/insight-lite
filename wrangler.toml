@@ -1,6 +1,6 @@
 name = "insight-hunter-lite-api"
-main = "dist-workers/index.mjs
-compatibility_date = "2025-12-12"
+main = "dist-worker/index.mjs"
+compatibility_date = "2024-12-12"
 account_id = "18c8e61a3669253dcfd0c7eec6be36a3"
 
 [assets]
@@ -8,6 +8,7 @@ directory = "./dist"
 binding = "ASSETS"
 html_handling = "auto-trailing-slash"
 not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
 
 [vars]
 ENVIRONMENT = "production"
@@ -19,13 +20,6 @@ vars = { ENVIRONMENT = "production" }
 routes = [
   { pattern = "lite.insighthunter.app/*", zone_name = "insighthunter.app" }
 ]
-
-[env.production.assets]
-directory = "./dist"
-binding = "ASSETS"
-html_handling = "auto-trailing-slash"
-not_found_handling = "single-page-application"
-run_worker_first = ["/api/*"]
 
 [env.staging]
 name = "insight-hunter-lite-api-staging"
