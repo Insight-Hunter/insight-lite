@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-worker
+db
+.env
+.vscode
+.stackblitz
+.git
+.github
+*.log
