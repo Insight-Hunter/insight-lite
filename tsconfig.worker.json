@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022", "WebWorker"],
+
+    "moduleResolution": "bundler",
+    "outDir": "dist-worker",
+    "rootDir": "workers",
+
+    "declaration": true,
+    "declarationMap": false,
+
+    "strict": true,
+    "noEmitOnError": true
+  },
+  "include": ["workers"]
+}
