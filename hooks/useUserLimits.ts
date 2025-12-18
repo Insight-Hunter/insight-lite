@@ -1,23 +1,32 @@
 import { useState } from 'react';
-import { LITE_LIMITS } from '../utils/quotaLimits';
+import { QuotaKey } from '../types/plans';
+import { LITE_LIMITS } from '../utils/quotas';
 
-export default function useUserLimits() {
-  const [limits, setLimits] = useState({
-    users: 1,
-    integrations: 0,
-    storageGB: 0,
-  });
+type UsageState = Record<QuotaKey, number>;
 
-  const checkLimit = (type, amount = 1) => {
-    if (limits[type] + amount > LITE_LIMITS[type]) {
-      return false;
-    }
-    return true;
+const INITIAL_USAGE: UsageState = {
+  users: 1,
+  integrations: 0,
+  storageGB: 0,
+};
+
+export function useUserLimits() {
+  const [usage, setUsage] = useState<UsageState>(INITIAL_USAGE);
+
+  const canUse = (key: QuotaKey, amount = 1): boolean =>
+    usage[key] + amount <= LITE_LIMITS[key];
+
+  const consume = (key: QuotaKey, amount = 1): void => {
+    setUsage(prev => ({
+      ...prev,
+      [key]: prev[key] + amount,
+    }));
   };
 
-  const incrementLimit = (type, amount = 1) => {
-    setLimits(prev => ({ ...prev, [type]: prev[type] + amount }));
+  return {
+    usage,
+    limits: LITE_LIMITS,
+    canUse,
+    consume,
   };
-
-  return { limits, checkLimit, incrementLimit };
 }
