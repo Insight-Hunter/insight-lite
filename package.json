@@ -1,5 +1,5 @@
 {
-  "name": "@insight-hunter/insight-lite",
+  "name": "@insighthunter/insight-lite",
   "version": "3.0.1",
   "description": "InsightHunter Lite – SPA + Cloudflare Worker for the Lite tier",
   "type": "module",
