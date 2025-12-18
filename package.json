@@ -3,6 +3,7 @@
   "version": "3.0.0",
   "description": "InsightHunter Lite – SPA + Cloudflare Worker for the Lite AFP tier",
   "type": "module",
+  "engineStrict": true,
   "main": "dist-worker/index.mjs",
   "types": "dist-worker/index.d.ts",
   "files": [
