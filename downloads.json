@@ -1,0 +1,20 @@
+{
+  "version": "v1.3.0",
+  "artifacts": [
+    {
+      "platform": "windows",
+      "url": "https://cdn.insight-hunter.com/insight-lite/v1.3.0/InsightLiteSetup.exe",
+      "sha256": "..."
+    },
+    {
+      "platform": "macos",
+      "url": "https://cdn.insight-hunter.com/insight-lite/v1.3.0/InsightLite.dmg",
+      "sha256": "..."
+    },
+    {
+      "platform": "linux",
+      "url": "https://cdn.insight-hunter.com/insight-lite/v1.3.0/InsightLite.AppImage",
+      "sha256": "..."
+    }
+  ]
+}
