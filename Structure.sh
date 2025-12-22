@@ -1,8 +1,14 @@
-import fs from 'fs';
-import path from 'path';
+// scripts/scaffold.ts
+import { fileURLToPath } from 'url';
+import { dirname, resolve, join } from 'path';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 
-const projectRoot = path.resolve(__dirname, '..');
-const structure = [
+// Fix for __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const projectRoot = resolve(__dirname, '..');
+const structure: string[] = [
   'src/app/components/SettingsPanel.tsx',
   'src/app/components/PluginManager.tsx',
   'src/app/components/Diagnostics.tsx',
@@ -68,23 +74,23 @@ const structure = [
   'README.md'
 ];
 
-function ensureDir(dir: string) {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+function ensureDir(dir: string): void {
+  if (!existsSync(dir)) {
+    mkdirSync(dir, { recursive: true });
   }
 }
 
-function ensureFile(file: string) {
-  const dir = path.dirname(file);
+function ensureFile(file: string): void {
+  const dir = dirname(file);
   ensureDir(dir);
-  if (!fs.existsSync(file)) {
-    fs.writeFileSync(file, '', 'utf-8');
+  if (!existsSync(file)) {
+    writeFileSync(file, '', 'utf-8');
   }
 }
 
-function scaffold() {
+function scaffold(): void {
   structure.forEach(file => {
-    const fullPath = path.join(projectRoot, file);
+    const fullPath = join(projectRoot, file);
     ensureFile(fullPath);
   });
   console.log('Scaffold complete!');
